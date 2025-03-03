@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* black background and white text globally */
+body {
+  background-color: #111111;
+  color: #ffffff;
+  font-family: sans-serif;
+}
+
+/* mobile responsiveness */
+@media (max-width: 480px) {
+  body {
+    margin: 0 auto;
+  }
+}

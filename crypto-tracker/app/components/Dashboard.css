@@ -1,0 +1,43 @@
+.bg-card {
+    background-color: #1e1e1e;
+    width: 400px;
+    min-height: 450px;
+}
+
+/* mobile responsiveness */
+@media (max-width: 480px) {
+    .bg-card {
+    margin: 0 auto;
+    width: 380px;
+    }
+}
+
+.refresh-btn {
+    text-align: center;
+    color: white;
+    background-color: #3b3b3b;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* hover effect */
+.refresh-btn:hover {
+    background-color: #2e2e2e;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* active (when clicked) */
+.refresh-btn:active {
+    background-color: #252525;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.refresh-btn:disabled {
+    background-color: #3b3b3b;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
