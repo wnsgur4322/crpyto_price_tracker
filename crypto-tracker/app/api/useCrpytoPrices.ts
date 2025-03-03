@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface Crypto {
   id: string;
@@ -10,7 +10,12 @@ interface Crypto {
   price_change_percentage_1h: number;
 }
 
-const fetchCryptoPrices = async (): Promise<Crypto[] | undefined> => {
+// custom error type for handling API errors
+interface ApiError {
+  message: string;
+}
+
+const fetchCryptoPrices = async (): Promise<Crypto[]> => {
   try {
     // API reference: https://docs.coingecko.com/reference/coins-markets
     const { data } = await axios.get<Crypto[]>(
@@ -26,41 +31,45 @@ const fetchCryptoPrices = async (): Promise<Crypto[] | undefined> => {
         },
       }
     );
-    return data;
+    return data ?? [];
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      console.log(error.request)
       // axios errors (e.g., API responded with 429)
-      if (error.response) {
-        const status = error.response.status;
+        const status = error.response?.status;
         if (status === 429) {
           throw new Error("Rate limit exceeded. Try again later.");
-        } else if (status >= 500) {
+        } else if (status && status >= 500) {
           throw new Error("CoinGecko API is down. Please try again later.");
-        } else {
+        } else if (error.response?.statusText) {
           throw new Error(`API error: ${error.response.statusText}`);
         }
-      } else if (error.request) {
-        // request was made, but no response received
-        throw new Error("No response from CoinGecko. Please try again later.");
-      }
-    } else {
-      // non-Axios errors (e.g., network issues, unknown errors)
-      throw new Error("An unknown error occurred.");
+
+        if (error.request) {
+          // request was made, but no response received
+          throw new Error("No response from CoinGecko. Please try again later.");
+        }
     }
+
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("An unknown error occurred.");
   }
+
+  
 };
 
 export const useCryptoPrices = () => {
-  return useQuery({
+  return useQuery<Crypto[], ApiError>({
     queryKey: ["cryptoPrices"],
     queryFn: fetchCryptoPrices,
-    refetchInterval: 300000, // refresh every 300 seconds
-    retry: (failureCount, error: any) => {
+    refetchInterval: 300000, // Refresh every 300 seconds
+    retry: (failureCount, error) => {
       if (error.message.includes("Rate limit exceeded")) {
-        return false; // stop retrying on 429 errors
+        return false; // Stop retrying on 429 errors
       }
-      return failureCount < 3; // retry up to 3 times for other errors
+      return failureCount < 3; // Retry up to 3 times for other errors
     },
   });
 };
