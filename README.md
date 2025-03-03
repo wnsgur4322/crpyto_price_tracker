@@ -1,3 +1,6 @@
+# Live site
+* https://crpyto-price-tracker.vercel.app/
+
 # Project Setup Guide
 
 ## 1️⃣ Install Dependencies

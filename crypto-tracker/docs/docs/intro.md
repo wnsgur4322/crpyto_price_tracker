@@ -4,6 +4,9 @@ sidebar_position: 1
 ---
 # Project Setup Guide
 
+## Live site
+* https://crpyto-price-tracker.vercel.app/
+
 ## 1️⃣ Install Dependencies
 Make sure you have **Node.js** installed, then run:
 
